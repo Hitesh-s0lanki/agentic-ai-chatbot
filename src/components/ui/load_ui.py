@@ -34,7 +34,8 @@ class LoadStreamlitUI:
             # Taily API key for tool bot
             tavily_api_key = ''
             if usecase_choice == "Chatbot with Tool":
-                tavily_api_key = st.text_input("Enter Tavily API Key", type="password")
+                tavily_api_key = st.text_input("Enter Tavily API Key", type="password") or os.getenv("TAVILY_API_KEY")  
+                os.environ["TAVILY_API_KEY"] = tavily_api_key
 
                 if not tavily_api_key:
                     st.warning("⚠️ Please Provide Your tavily API key")
