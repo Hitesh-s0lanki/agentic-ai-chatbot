@@ -6,6 +6,7 @@ from src.components.tools.tools import Tools
 from langgraph.prebuilt import tools_condition
 
 from src.components.nodes.chatbot_with_tool_node import ChatbotWithToolNode
+from src.components.nodes.ai_news_node import AINewsNode
 
 class GraphBuilder:
     def __init__(self, model):
@@ -51,6 +52,22 @@ class GraphBuilder:
         self.grah_builder.add_edge("tools", "chatbot")
         self.grah_builder.add_edge("chatbot", END)
 
+    def ai_news_build_graph(self):
+
+        # Defining the node 
+        ai_news_node = AINewsNode(self.llm)
+
+        # Adding the Node to Graph
+        self.grah_builder.add_node("fetch_news", ai_news_node.fetch_news)
+        self.grah_builder.add_node("summarize_news", ai_news_node.summarize_news)
+        self.grah_builder.add_node("save_result", ai_news_node.save_result)
+
+        ## Adding the Edges
+        self.grah_builder.set_entry_point("fetch_news")
+        self.grah_builder.add_edge("fetch_news", "summarize_news")
+        self.grah_builder.add_edge("summarize_news", "save_result")
+        self.grah_builder.add_edge("save_result", END)
+
 
     def setup_graph(self, usecase: str):
         """
@@ -61,6 +78,8 @@ class GraphBuilder:
             self.basic_chatbot_build_graph()
         elif usecase == "Chatbot with Tool":
             self.chatbot_with_tools_build_graph()
+        elif usecase == "AI News":
+            self.ai_news_build_graph()
         
         return self.grah_builder.compile()
             

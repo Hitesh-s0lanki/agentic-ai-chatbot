@@ -18,6 +18,9 @@ def load_langgraph_agentic_ai_app():
     ui = LoadStreamlitUI()
     user_controls, user_input = ui.load_streamlit_ui()
 
+    if st.session_state.get("is_fetch_button_clicked", False):
+        user_input = user_controls['time_frame']
+
     # Only proceed if user has entered a prompt and clicked Submit
     if user_input:
         try:
